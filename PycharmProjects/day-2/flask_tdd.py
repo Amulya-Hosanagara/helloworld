@@ -1,0 +1,43 @@
+from flask import Flask
+from flask_restful import reqparse, abort, Api, Resource
+
+import pytest
+employee = {'name': "Amulya", 'id':11210}
+
+app = Flask(__name__)
+api = Api(app)
+
+class SampleApi(Resource):
+    def get(self):
+        return {'test' : 123 }
+
+class Employee(Resource):
+     def get(self):
+         return { 'id': 11210 , 'name': 'Amulya' }
+
+api.add_resource(SampleApi, '/')
+
+api.add_resource(Employee, '/employee')
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+@pytest.fixture
+def client():
+    app.Testing = True
+    client = app.test_client()
+
+    yield client
+
+def test_SampleApi_get(client):
+    rv = client.get('/')
+
+    print(rv.json)
+    assert rv.json['test'] == 123
+
+def test_Employee_get(client):
+     rv = client.get('/employee')
+
+     print(rv.json)
+     assert rv.json['id'] == 11210
+     assert rv.json['name'] == "Ravi"
